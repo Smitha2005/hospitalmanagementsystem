@@ -21,6 +21,7 @@ Each portal has its own dedicated features as shown in the project flowchart.
 
 
 🔰 User Portals & Features
+
 👨‍⚕️ Doctor Portal
 
 View all appointment requests
@@ -59,7 +60,7 @@ Patient → Requests appointment → Checks approval status
 
 Staff → Views assigned patients → Checks schedule
 
-Appointment is scheduled for both patient and staff
+schedules are appointed for both patient and staff
 
 🛠️ Technologies Used
 Frontend
@@ -73,5 +74,6 @@ JavaScript — Client-side validation, password toggle, event listeners
 Templating Engine
 
 EJS — Server-side templating using <% %> for dynamic data rendering
+
 
 
