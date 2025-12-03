@@ -16,8 +16,8 @@ Patient
 Staff
 
 Each portal has its own dedicated features as shown in the project flowchart.
+<img width="350" height="550" alt="Hospital Management Flowchart" src="https://github.com/user-attachments/assets/1d7de810-36dc-43bd-a436-3fa2890d78b8" />
 
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/1d7de810-36dc-43bd-a436-3fa2890d78b8" />
 
 
 🔰 User Portals & Features
@@ -73,4 +73,5 @@ JavaScript — Client-side validation, password toggle, event listeners
 Templating Engine
 
 EJS — Server-side templating using <% %> for dynamic data rendering
+
 
