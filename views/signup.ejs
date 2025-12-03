@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sign Up - HospitalMS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 400px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    .error {
+      color: #b91c1c;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .hint {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Account</h1>
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form id="signupForm" action="/signup" method="POST" novalidate>
+      <div class="form-group">
+        <label for="username">Name</label>
+        <input id="username" name="username" type="text" required placeholder="Your name (3-15 letters)" maxlength="15" />
+        <div id="nameHint" class="hint">3–15 alphabetic characters (A–Z). Special characters and numbers are not allowed.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input id="password" name="password" type="password" required placeholder="Password (8-32 chars)" minlength="8" maxlength="32" />
+          <button type="button" id="togglePwd" class="btn" style="width:auto;padding:10px 12px;">Show</button>
+        </div>
+        <div id="pwdHint" class="hint">8–32 chars, include uppercase, lowercase, number and special character.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input id="confirm_password" name="confirm_password" type="password" required placeholder="Confirm password" />
+          <button type="button" id="toggleConfirm" class="btn" style="width:auto;padding:10px 12px;">Show</button>
+        </div>
+        <div id="confirmHint" class="hint"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+          <option value="">Select role</option>
+          <option value="patient">Patient</option>
+          <option value="doctor">Doctor</option>
+          <option value="staff">Staff</option>
+        </select>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn" type="submit">Sign up</button>
+        <a href="/login" class="btn-ghost">Back to login</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    (function () {
+      const form = document.getElementById('signupForm');
+      const nameInput = document.getElementById('username');
+      const pwdInput = document.getElementById('password');
+      const confirmInput = document.getElementById('confirm_password');
+      const nameHint = document.getElementById('nameHint');
+      const pwdHint = document.getElementById('pwdHint');
+      const confirmHint = document.getElementById('confirmHint');
+      const togglePwdBtn = document.getElementById('togglePwd');
+      const toggleConfirmBtn = document.getElementById('toggleConfirm');
+
+      const nameRe = /^[A-Za-z]{3,15}$/;
+      const pwdRe = /^(?=.{8,32}$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*()_\-+=[\]{};':"\\|,.<>\/?]).*$/;
+
+      // Toggle password visibility
+      togglePwdBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (pwdInput.type === 'password') {
+          pwdInput.type = 'text';
+          togglePwdBtn.textContent = 'Hide';
+        } else {
+          pwdInput.type = 'password';
+          togglePwdBtn.textContent = 'Show';
+        }
+      });
+
+      toggleConfirmBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirmInput.type === 'password') {
+          confirmInput.type = 'text';
+          toggleConfirmBtn.textContent = 'Hide';
+        } else {
+          confirmInput.type = 'password';
+          toggleConfirmBtn.textContent = 'Show';
+        }
+      });
+
+      function validateName() {
+        const v = nameInput.value.trim();
+        if (!v) { nameHint.textContent = 'Name is required.'; return false; }
+        if (!nameRe.test(v)) { nameHint.textContent = 'Use 3–15 letters only. No numbers or special characters allowed.'; return false; }
+        nameHint.textContent = '';
+        return true;
+      }
+
+      function validatePassword() {
+        const v = pwdInput.value;
+        if (!v) { pwdHint.textContent = 'Password is required.'; return false; }
+        if (!pwdRe.test(v)) { pwdHint.textContent = 'Weak password. Include upper, lower, number and special.'; return false; }
+        pwdHint.textContent = '';
+        return true;
+      }
+
+      function validateConfirm() {
+        if (confirmInput.value !== pwdInput.value) { confirmHint.textContent = 'Passwords do not match.'; return false; }
+        confirmHint.textContent = '';
+        return true;
+      }
+
+      nameInput.addEventListener('input', validateName);
+      pwdInput.addEventListener('input', () => { validatePassword(); validateConfirm(); });
+      confirmInput.addEventListener('input', validateConfirm);
+
+      form.addEventListener('submit', function (e) {
+        const ok = validateName() & validatePassword() & validateConfirm();
+        if (!ok) {
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

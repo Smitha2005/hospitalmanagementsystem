@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Medical Record - HospitalMS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="container">
+    <section class="card">
+      <h2>Medical Record #<%= record.id %></h2>
+      <p><strong>Patient:</strong> <%= record.patient %></p>
+      <p><strong>Doctor:</strong> <%= record.doctor %></p>
+      <p><strong>Date:</strong> <%= record.date %></p>
+      <h4>Notes</h4>
+      <pre style="white-space:pre-wrap;padding:10px;background:#f7fafc;border-radius:6px;"><%= record.notes %></pre>
+
+      <div style="margin-top:12px;">
+        <a class="btn-ghost" href="/staff">Back to Staff</a>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

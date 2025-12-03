@@ -1,0 +1,19 @@
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/">HospitalMS</a>
+
+    <!-- make nav a flex container and keep Sign up always present at the right -->
+    <nav class="nav" style="display:flex;align-items:center;gap:8px;">
+      <% if (typeof user !== 'undefined' && user) { %>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/account" class="btn-ghost">Account</a>
+        <a class="btn-ghost" href="/logout">Logout</a>
+      <% } else { %>
+        <a href="/login" class="btn">Login</a>
+      <% } %>
+
+      <!-- always-visible sign up pushed to the right -->
+      <a href="/signup" class="btn btn-primary" style="margin-left:auto;">Sign up</a>
+    </nav>
+  </div>
+</header>

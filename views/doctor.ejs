@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Doctor - HospitalMS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .history-row td { background:#fbfcff; font-size:0.95rem; color:#334155; padding:10px 12px; }
+    .history-list { margin:0; padding-left:18px; }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="container">
+    <h2>Appointments</h2>
+
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Status</th><th>Medical history</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% if (appointments && appointments.length) { %>
+          <% appointments.forEach(a => { %>
+            <tr>
+              <td><%= a.id %></td>
+              <td><%= a.patient || '—' %></td>
+              <td><%= a.doctor || '—' %></td>
+              <td><%= a.date %></td>
+              <td class="status"><%= a.status || 'pending' %></td>
+              <td>
+                <% if (a.history && a.history.length) { %>
+                  <small><%= a.history[0].notes.length > 80 ? a.history[0].notes.slice(0,80) + '...' : a.history[0].notes %></small>
+                  <div class="muted">(<%= a.history.length %> record<%= a.history.length > 1 ? 's' : '' %>)</div>
+                <% } else { %>
+                  <span class="muted">No history</span>
+                <% } %>
+              </td>
+              <td class="actions">
+                <% if (a.status !== 'accepted') { %>
+                  <form method="POST" action="/appointments/<%= a.id %>/accept" class="inline-form" style="display:inline;">
+                    <button class="btn small" type="submit">Accept</button>
+                  </form>
+                <% } %>
+                <% if (a.status !== 'rejected') { %>
+                  <form method="POST" action="/appointments/<%= a.id %>/reject" class="inline-form" style="display:inline;">
+                    <button class="btn-ghost small" type="submit">Reject</button>
+                  </form>
+                <% } %>
+
+                <!-- Notes link only visible after appointment is accepted -->
+                <% if (a.status === 'accepted') { %>
+                  <a href="/appointments/<%= a.id %>/notes" class="btn-ghost small" style="margin-left:6px;">Notes</a>
+                <% } %>
+
+                <!-- Delete button (visible for all appointments assigned to this doctor) -->
+                <form method="POST" action="/appointments/<%= a.id %>/delete" class="inline-form" style="display:inline;margin-left:6px;" onsubmit="return confirm('Delete this appointment?');">
+                  <button class="btn-ghost small" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+
+            <tr class="history-row">
+              <td colspan="7">
+                <% if (a.history && a.history.length) { %>
+                  <strong>Medical history for <%= a.patient %>:</strong>
+                  <ul class="history-list">
+                    <% a.history.forEach(h => { %>
+                      <li style="margin-bottom:12px;padding:10px;background:#f0fdf4;border-left:3px solid #22c55e;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                          <small class="muted"><%= h.date %> — <%= h.doctor || 'unassigned' %></small><br/>
+                          <%= h.notes %>
+                        </div>
+                        <form method="POST" action="/medical/<%= h.id %>/delete" style="display:inline;" onsubmit="return confirm('Delete this medical history?');">
+                          <button class="btn-ghost small" type="submit" style="white-space:nowrap;">Delete</button>
+                        </form>
+                      </li>
+                    <% }) %>
+                  </ul>
+                <% } else { %>
+                  <em class="muted">No medical history submitted for this patient.</em>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="7" class="muted">No appointments.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <section class="card small" style="margin-top:18px;">
+      <h3>Manually add appointment</h3>
+      <form action="/doctor/appointments" method="POST" class="form">
+        <input name="patient" placeholder="Patient username" required />
+        <input name="date" type="datetime-local" required />
+        <textarea name="medical_history" placeholder="Medical history"></textarea>
+        <button class="btn" type="submit">Add</button>
+      </form>
+    </section>
+
+    <!-- Add Staff (doctor-only) -->
+    <section class="card small" style="margin-top:22px;">
+      <h3>Add staff</h3>
+      <form action="/doctor/staff/add" method="POST" class="form">
+        <label>Name
+          <input name="name" placeholder="Staff name" required />
+        </label>
+        <label>Role
+          <input name="role" placeholder="Role (e.g. nurse, admin)" />
+        </label>
+        <label>Shift
+          <input name="shift" placeholder="Shift (e.g. morning)" />
+        </label>
+        <button class="btn" type="submit">Add Staff</button>
+      </form>
+    </section>
+
+    <!-- Staff management (doctor-only) -->
+    <section class="card" style="margin-top:22px;">
+      <h3>Staff</h3>
+      <ul class="list">
+        <% if (staff && staff.length) { %>
+          <% staff.forEach(s => { %>
+            <li style="display:flex;align-items:center;justify-content:space-between;padding:8px;background:#f9fafb;border-radius:4px;margin-bottom:6px;">
+              <div>
+                <strong><%= s.name %></strong>
+                <span class="muted"> — <%= s.role || '—' %> (<%= s.shift || '—' %>)</span>
+              </div>
+              <form method="POST" action="/staff/<%= s.id %>/delete" style="display:inline;" onsubmit="return confirm('Delete staff?');">
+                <button class="btn-ghost small" type="submit">Delete</button>
+              </form>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li class="muted">No staff records.</li>
+        <% } %>
+      </ul>
+    </section>
+
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>
+
+<script>
+  
+</script>

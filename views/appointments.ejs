@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Appointments</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h2>Appointments</h2>
+  <form method="POST" action="/appointments">
+    <input type="text" name="patient" placeholder="Patient Name" required><br>
+    <input type="text" name="doctor" placeholder="Doctor Name" required><br>
+    <input type="date" name="date" required><br>
+    <button type="submit">Add Appointment</button>
+  </form>
+
+  <ul>
+    <% appointments.forEach(a => { %>
+      <li><%= a.patient %> with <%= a.doctor %> on <%= a.date %></li>
+    <% }) %>
+  </ul>
+</body>
+</html>

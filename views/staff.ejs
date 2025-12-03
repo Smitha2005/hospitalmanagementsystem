@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Staff - HospitalMS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="container staff-grid">
+    <section class="card">
+      <h3>Staff</h3>
+
+      <!-- Search staff -->
+      <form class="form" action="/staff" method="GET" style="margin-bottom:12px; display:flex; gap:8px;">
+        <input name="q" placeholder="Search staff by name, role or shift" value="<%= query || '' %>" />
+        <button class="btn" type="submit">Search</button>
+      </form>
+
+      <ul class="list" style="margin-top:12px;">
+        <% if (staff && staff.length) { %>
+          <% staff.forEach(s => { %>
+            <li style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;">
+              <div>
+                <strong><%= s.name %></strong>
+                <span class="muted"> — <%= s.role || '—' %> (<%= s.shift || '—' %>)</span>
+              </div>
+              <!-- Delete button removed - only doctors can delete staff -->
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li class="muted">No staff records.</li>
+        <% } %>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3>Appointments</h3>
+      <table class="table small">
+        <thead><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>
+          <% if (appointments && appointments.length) { %>
+            <% appointments.forEach(a => { %>
+              <tr>
+                <td><%= a.id %></td>
+                <td><%= a.patient || '—' %></td>
+                <td><%= a.doctor || '—' %></td>
+                <td><%= a.date %></td>
+                <td class="status"><%= a.status || 'pending' %></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="5" class="muted">No appointments.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+
+      <form class="form" action="/staff/appointment" method="POST" style="margin-top:12px;">
+        <input name="patient" placeholder="Patient username" required />
+        <input name="doctor" placeholder="Doctor username (optional)" />
+        <input name="date" type="datetime-local" required />
+        <button class="btn" type="submit">Create Appointment</button>
+      </form>
+    </section>
+
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

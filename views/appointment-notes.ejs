@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Appointment Notes - HospitalMS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="container">
+    <section class="card">
+      <h2>Appointment #<%= appointment.id %> — Notes</h2>
+      <p><strong>Patient:</strong> <%= appointment.patient %></p>
+      <p><strong>Doctor:</strong> <%= appointment.doctor || 'unassigned' %></p>
+      <p><strong>Date:</strong> <%= appointment.date %></p>
+      <p><strong>Status:</strong> <%= appointment.status || 'pending' %></p>
+
+      <hr/>
+
+      <!-- Medical History (from appointment request) -->
+      <h3>Medical History (from appointment request)</h3>
+      <% if (medicalHistory && medicalHistory.length) { %>
+        <ul class="list">
+          <% medicalHistory.forEach(h => { %>
+            <li style="margin-bottom:12px;padding:10px;background:#f0fdf4;border-left:3px solid #22c55e;">
+              <small class="muted"><%= h.date %></small><br/>
+              <div style="margin-top:6px;"><%= h.notes %></div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p class="muted">No medical history for this appointment.</p>
+      <% } %>
+
+      <hr/>
+
+      <!-- Doctor Notes -->
+      <h3>Doctor Notes</h3>
+      <% if (doctorNotes && doctorNotes.length) { %>
+        <ul class="list">
+          <% doctorNotes.forEach(n => { %>
+            <li style="margin-bottom:18px; padding:12px; background:#fef3c7; border-left:3px solid #f59e0b;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <small class="muted"><%= n.date %> — <strong><%= n.doctor %></strong></small>
+                </div>
+                <form method="POST" action="/notes/<%= n.id %>/delete" style="display:inline;" onsubmit="return confirm('Delete this note?');">
+                  <button class="btn-ghost small" type="submit">Delete</button>
+                </form>
+              </div>
+              <div style="margin-top:8px;"><%= n.notes %></div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p class="muted">No doctor notes added yet.</p>
+      <% } %>
+
+      <hr/>
+
+      <h3>Add Note</h3>
+      <form action="/appointments/<%= appointment.id %>/notes" method="POST" class="form">
+        <label>Notes
+          <textarea name="notes" rows="12" placeholder="Enter your notes here..." required style="min-height:250px; width:100%; box-sizing:border-box;"></textarea>
+        </label>
+        <button class="btn" type="submit">Save Note</button>
+      </form>
+
+      <p style="margin-top:18px;"><a class="btn-ghost" href="/doctor">Back to Appointments</a></p>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

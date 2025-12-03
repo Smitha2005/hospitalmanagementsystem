@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Patient - HospitalMS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .doctor-selection { margin-top: 15px; }
+    .doctor-count { font-size: 0.9rem; color: #64748b; margin-top: 5px; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="container">
+    <h2>My Appointments</h2>
+
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Doctor</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% if (appointments && appointments.length) { %>
+          <% appointments.forEach(a => { %>
+            <tr>
+              <td><%= a.id %></td>
+              <td><%= a.doctor || '—' %></td>
+              <td><%= a.date %></td>
+              <td class="status"><%= a.status || 'pending' %></td>
+              <td class="actions">
+                <form method="POST" action="/appointments/<%= a.id %>/delete" onsubmit="return confirm('Cancel this appointment?');" style="display:inline;">
+                  <button class="btn-ghost small" type="submit">Cancel</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="5" class="muted">No appointments found.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <section class="card small">
+      <h3>Request new appointment</h3>
+      <form action="/appointments" method="POST" class="form">
+        
+        <div>
+          <label for="department">Select Department:</label>
+          <select id="department" name="department" required onchange="loadDoctors()">
+            <option value="">-- Choose a Department --</option>
+            <% if (departments && departments.length) { %>
+              <% departments.forEach(dept => { %>
+                <option value="<%= dept.id %>"><%= dept.name %></option>
+              <% }) %>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="doctor-selection" id="doctorSelection" style="display:none;">
+          <label for="doctor">Select Doctor:</label>
+          <select id="doctor" name="doctor" required>
+            <option value="">-- Choose a Doctor --</option>
+          </select>
+          <div class="doctor-count" id="doctorCount"></div>
+        </div>
+
+        <input name="date" type="datetime-local" required />
+        <button class="btn" type="submit">Request</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const doctorsByDepartment = <%- JSON.stringify(doctorsByDepartment || {}) %>;
+
+    function loadDoctors() {
+      const departmentSelect = document.getElementById('department');
+      const doctorSelect = document.getElementById('doctor');
+      const doctorSelection = document.getElementById('doctorSelection');
+      const doctorCount = document.getElementById('doctorCount');
+      
+      const selectedDepartmentId = departmentSelect.value;
+      
+      if (!selectedDepartmentId) {
+        doctorSelection.style.display = 'none';
+        doctorSelect.innerHTML = '<option value="">-- Choose a Doctor --</option>';
+        return;
+      }
+
+      const doctors = doctorsByDepartment[selectedDepartmentId] || [];
+      
+      if (doctors.length === 0) {
+        doctorSelection.style.display = 'none';
+        doctorCount.textContent = 'No doctors available in this department.';
+        return;
+      }
+
+      doctorSelect.innerHTML = '<option value="">-- Choose a Doctor --</option>';
+      doctors.forEach(doctor => {
+        const option = document.createElement('option');
+        option.value = doctor.name;
+        option.textContent = doctor.name;
+        doctorSelect.appendChild(option);
+      });
+
+      doctorCount.textContent = `${doctors.length} doctor${doctors.length > 1 ? 's' : ''} available`;
+      doctorSelection.style.display = 'block';
+    }
+  </script>
+
+  <%- include('partials/footer') %>
+</body>
+</html>
